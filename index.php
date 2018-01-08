@@ -40,12 +40,46 @@
 <div class="container">
     <div class="card" style="margin-top: 40px">
         <div class="card-body">
-            <h4 class="card-title">Inserisci l'url dell'immagine da analizzare</h4>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Inserisci il link diretto dell'immagine da analizzare</p>
+
+            <label for="inputPassword5">Link</label>
+            <input type="link" id="inputImageLink" class="form-control" data-toggle="modal" data-target="#myModal" aria-describedby="imageHelpBlock" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0);">
+            <small id="imageHelpBlock" class="form-text text-muted">
+                Il testo inserito deve essere un link diretto all'immagine valido, quindi deve terminare con il formato dell'immagine (.JPG, PNG, .ICO ecc ecc), supporta la certificazione SSL.
+            </small>
+
+            <div style="text-align: center; margin-top: 20px;"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="color: #2196f3;">ANALIZZA</button></div>
+
+            <!-- Button trigger modal -->
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Analisi in corso...</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
+
+
+
 
 
 <!-- Optional JavaScript -->
@@ -54,5 +88,8 @@
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+<script type="text/javascript">
+    $('#myModal').modal('toggle')
+</script>
 </body>
 </html>
