@@ -46,10 +46,10 @@
             <label for="inputPassword5">Link</label>
             <input type="link" id="inputImageLink" class="form-control" data-toggle="modal" data-target="#myModal" aria-describedby="imageHelpBlock" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0);">
             <small id="imageHelpBlock" class="form-text text-muted">
-                Il testo inserito deve essere un link diretto all'immagine valido, quindi deve terminare con il formato dell'immagine (.JPG, PNG, .ICO ecc ecc), supporta la certificazione SSL.
+                Il testo inserito deve essere un link diretto all'immagine, quindi deve terminare con il formato dell'immagine (.JPG, PNG, .ICO ecc ecc), supporta la certificazione SSL.
             </small>
 
-            <div style="text-align: center; margin-top: 20px;"><button id="oneImageLink" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="color: #2196f3;">ANALIZZA</button></div>
+            <div style="text-align: center; margin-top: 20px;"><button disabled id="oneImageLink" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="color: #2196f3;">ANALIZZA</button></div>
 
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -93,9 +93,32 @@
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 <script type="text/javascript">
+    var isUrl = false;
     var button = document.getElementById("oneImageLink");
     var textfieldImage = document.getElementById("inputImageLink");
     var divSpinner = document.getElementById("divSpinner");
+    var spaces = false;
+
+    jQuery("#inputImageLink").keyup(function (e) {
+        if(textfieldImage.value.indexOf(' ') >= 0){
+            spaces = true;
+        } else {
+            spaces = false;
+        }
+        console.log()
+        if(ValidURL(textfieldImage.value) && !spaces && (textfieldImage.value.includes(".png") || textfieldImage.value.includes(".jpg") || textfieldImage.value.includes(".ico")) ){
+            isUrl = true;
+        }
+        else{
+            isUrl = false;
+        }
+        if(isUrl){
+            button.removeAttribute("disabled")
+        } else {
+            button.setAttribute("disabled", "")
+        }
+    })
+
     button.addEventListener("click",function(e){
         var sourceImageUrl = textfieldImage.value;
 
@@ -141,6 +164,17 @@
             });
 
     },false);
+
+    function ValidURL(str) {
+
+        var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+        if(!regex .test(str)) {
+
+            return false;
+        } else {
+            return true;
+        }
+    }
 </script>
 </body>
 </html>
