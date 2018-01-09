@@ -17,9 +17,10 @@
 
     <!-- Material Design for Bootstrap fonts and icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-
+    <link rel="stylesheet" href="css/oneFace.css">
     <!-- Material Design for Bootstrap CSS -->
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css" integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -48,23 +49,26 @@
                 Il testo inserito deve essere un link diretto all'immagine valido, quindi deve terminare con il formato dell'immagine (.JPG, PNG, .ICO ecc ecc), supporta la certificazione SSL.
             </small>
 
-            <div style="text-align: center; margin-top: 20px;"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="color: #2196f3;">ANALIZZA</button></div>
-
-            <!-- Button trigger modal -->
-
+            <div style="text-align: center; margin-top: 20px;"><button id="oneImageLink" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="color: #2196f3;">ANALIZZA</button></div>
 
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Analisi in corso...</h5>
+                            <h5 class="modal-title" id="modalTitle">Analisi in corso...</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-
+                            <div class="semipolar-spinner" id="divSpinner" :style="spinnerStyle" style="margin: auto">
+                                <div class="ring"></div>
+                                <div class="ring"></div>
+                                <div class="ring"></div>
+                                <div class="ring"></div>
+                                <div class="ring"></div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
@@ -84,12 +88,59 @@
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<!--<script src="node_modules/jquery/src/jquery.js"></script>-->
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 <script type="text/javascript">
-    $('#myModal').modal('toggle')
+    var button = document.getElementById("oneImageLink");
+    var textfieldImage = document.getElementById("inputImageLink");
+    var divSpinner = document.getElementById("divSpinner");
+    button.addEventListener("click",function(e){
+        var sourceImageUrl = textfieldImage.value;
+
+
+        //subscription key
+        var subscriptionKey = "5dd2b7052f474b22b421bd9460d2eed3";
+        var uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
+        console.log(sourceImageUrl);
+        // Request parameters.
+        var params = {
+            "returnFaceId": "true",
+            "returnFaceLandmarks": "false",
+            "returnFaceAttributes": "age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise",
+        };
+
+        $.ajax({
+            url: uriBase + "?" + $.param(params),
+
+            // Request headers.
+            beforeSend: function(xhrObj){
+                xhrObj.setRequestHeader("Content-Type","application/json");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
+
+            type: "POST",
+
+            // Request body.
+            data: '{"url": ' + '"' + sourceImageUrl + '"}',
+        })
+            .done(function(data) {
+                // Show formatted JSON on webpage.
+                console.log(JSON.stringify(data, null, 2));
+                jQuery("#divSpinner").fadeOut(500);
+                //divSpinner.style["display"] = "none";
+                document.getElementById("modalTitle").textContent = "Scansione riuscita";
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                // Display error message.
+                var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                        jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                alert(errorString);
+            });
+
+    },false);
 </script>
 </body>
 </html>
