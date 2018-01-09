@@ -53,7 +53,7 @@
 
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-lg" style="max-width: 90%;" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="modalTitle">Analisi in corso...</h5>
@@ -68,6 +68,14 @@
                                 <div class="ring"></div>
                                 <div class="ring"></div>
                                 <div class="ring"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <img style="width: 90%; margin: 0 auto; display: block;" id="modalImage" usemap="#faces">
+                                <map name="faces" id="faces">
+
+                                </map>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -97,6 +105,7 @@
     var button = document.getElementById("oneImageLink");
     var textfieldImage = document.getElementById("inputImageLink");
     var divSpinner = document.getElementById("divSpinner");
+    var modalImage = document.getElementById("modalImage");
     var spaces = false;
 
     jQuery("#inputImageLink").keyup(function (e) {
@@ -121,6 +130,8 @@
 
     button.addEventListener("click",function(e){
         var sourceImageUrl = textfieldImage.value;
+        divSpinner.style["display"] = "block";
+        modalImage.style["display"] = "none";
 
 
         //subscription key
@@ -149,11 +160,50 @@
             data: '{"url": ' + '"' + sourceImageUrl + '"}',
         })
             .done(function(data) {
+                var infos = JSON.stringify(data, null, 2);
                 // Show formatted JSON on webpage.
+                var h = modalImage.height;
+                var nh;
+                var coeff;
+
+                var img = new Image();
+                img.addEventListener("load", function(){
+                    nh = this.naturalHeight;
+                });
+                img.src = sourceImageUrl;
+
+                coeff = nh / h;
+
+                for(var cont=0; cont<data.length; cont++){
+                    x1 = data[cont].faceRectangle.left;
+                    y1 = data[cont].faceRectangle.top;
+                    x2 = x1 + data[cont].faceRectangle.width;
+                    y2 = y1 + data[cont].faceRectangle.width;
+                    x1 = 10;
+                    x2 = 20;
+                    y1 = 20;
+                    y2 = 10;
+                    $("#faces").append('<area shape="rect" coords="'+ x1 +','+ y1 + ',' + x2 + ',' + y2 + '" alt="Face">');
+                }
+                for(var cont=0; cont<data.length; cont++){
+                    console.log("Added face in image");
+                    $("#faces").append('<area shape="rect" coords="230,316,160,246" alt="Face">');
+                }
+
+
                 console.log(JSON.stringify(data, null, 2));
+
+                console.log(data.length);
+                for(var cont=0; cont<data.length; cont++){
+                    console.log("Added face in image");
+                    $("#faces").append('<area shape="rect" coords="230,316,160,246" alt="Face">');
+                }
+
                 jQuery("#divSpinner").fadeOut(500);
-                //divSpinner.style["display"] = "none";
+                divSpinner.style["display"] = "none";
                 document.getElementById("modalTitle").textContent = "Scansione riuscita";
+                modalImage.style["display"] = "block";
+                modalImage.setAttribute("src", sourceImageUrl);
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
                 // Display error message.
@@ -164,6 +214,25 @@
             });
 
     },false);
+
+    function addChild(doc, parent, child, childText, attributes) {
+        if (typeof child == "string") {
+            childNode = doc.createElement(child);
+        } else {
+            childNode = child;
+        }
+        if (typeof childText == "string") {
+            childTextNode = doc.createTextNode(childText);
+            childNode.appendChild(childTextNode);
+        }
+        if (attributes) {
+            for (var att in attributes) {
+                childNode.setAttribute(att,attributes[att]);
+            }
+        }
+        parent.appendChild(childNode);
+        return childNode;
+    }
 
     function ValidURL(str) {
 
