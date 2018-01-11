@@ -24,11 +24,11 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </head>
+<body>
+<script src="js/webcam.js"></script>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
     <a class="navbar-brand" href="#">FaceYou</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -36,17 +36,79 @@
     </div>
 </nav>
 <div class="container">
+    <div class="card col-lg-5" style="margin-top: 70px; margin: auto; margin-top: 70px">
+        <div class="card-body">
+            <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Login</p>
+            <label for="exampleInputEmail1" class="bmd-label-floating">FaceID</label>
+            <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
+            <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
+            <br>
+            <script type="text/javascript">
 
+                var enabled = false;
+
+                var WebCamera = require("webcamjs");
+
+                WebCamera.attach('#camdemo');
+                console.log("WebCam started");
+
+                /*document.getElementById("start").addEventListener('click',function(){
+                    if(!enabled){
+                        enabled = true;
+                        WebCamera.attach('#camdemo');
+                        console.log("The camera has been started");
+                    }else{
+                        enabled = false;
+                        WebCamera.reset();
+                        console.log("The camera has been disabled");
+                    }
+                },false);*/
+            </script>
+            <hr style="width: 100px">
+            <div style="width: 100%">
+                <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
+                <input type="email" class="form-control" id="inputPassword" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0); box-shadow: none">
+                <span class="bmd-help">Non condividere la password (o la faccia) con nessuno.</span>
+            </div>
+            <div style="text-align: center; margin-top: 10px;"><button type="button" class="btn btn-raised btn-success" id="buttonLogin">Login con FaceID</button></div>
+            <!--<a href="javascript:void(take_snapshot())">Take Snapshot</a>-->
+        </div>
+    </div>
 </div>
-<!-- Optional JavaScript -->
+
+<script type="text/javascript">
+    var cloudinary = require('cloudinary');
+
+    cloudinary.config({
+        cloud_name: 'ext',
+        api_key: '772469129542322',
+        api_secret: 'R4YiTZdZAUmBU83tFibtJRFn9RI'
+    });
+
+    var buttonLogin = document.getElementById("buttonLogin");
+    jQuery("#inputPassword").keyup(function (e) {
+        if(document.getElementById("inputPassword").value != ""){
+            buttonLogin.textContent="Login con Password";
+        } else {
+            buttonLogin.textContent="Login con FaceID";
+        }
+    });
+
+    buttonLogin.addEventListener("click", function (e) {
+        if(buttonLogin.textContent == "Login con FaceID"){
+            cloudinary.uploader.upload("../img.jpg", function(result) {
+                console.log(result)
+            });
+        }else{
+
+        }
+    })
+
+</script>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <!--<script src="node_modules/jquery/src/jquery.js"></script>-->
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
-<script type="text/javascript">
-
-
-</script>
 </body>
 </html>

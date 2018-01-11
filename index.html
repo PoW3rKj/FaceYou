@@ -43,7 +43,7 @@
                 <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
             </li>
             <li>
-                <a id="logout" class="nav-link" href="#" style="float: right">Esci <span class="sr-only"></span></a>
+                <a id="logout" class="nav-link" href="#" style="">Esci <span class="sr-only"></span></a>
             </li>
         </ul>
     </div>
@@ -184,6 +184,7 @@
                 var h = modalImage.height;
                 var nh;
                 var coeff;
+                var mat = [];
 
                 var img = new Image();
                 img.addEventListener("load", function(){
@@ -194,6 +195,11 @@
                 coeff = nh / h;
                 var obj = JSON.parse(JSON.stringify(data, null, 2));
                 for(var cont=0; cont<data.length; cont++){
+                    var face = {
+                        x: obj[cont].faceRectangle.left,
+                        i: cont,
+                    }
+                    mat.push(face);
                     x1 = data[cont].faceRectangle.left;
                     y1 = data[cont].faceRectangle.top;
                     x2 = x1 + data[cont].faceRectangle.width;
@@ -204,6 +210,8 @@
                     y2 = 10;
                     $("#faces").append('<area shape="rect" coords="'+ x1 +','+ y1 + ',' + x2 + ',' + y2 + '" alt="Face">');
                 }
+
+
 
                 for(var cont=0; cont<data.length; cont++){
                     console.log("Added face in image");
