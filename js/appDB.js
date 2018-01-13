@@ -1,41 +1,66 @@
-// This works on all devices/browsers, and uses IndexedDBShim as a final fallback
-var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+var idbSupported = false;
+var db;
 
-// Open (or create) the database
-var open = indexedDB.open("MyDatabase", 1);
+document.addEventListener("DOMContentLoaded", function(){
 
-// Create the schema
-open.onupgradeneeded = function() {
-    var db = open.result;
-    var store = db.createObjectStore("MyObjectStore", {keyPath: "id"});
-    var index = store.createIndex("NameIndex", ["name.last", "name.first"]);
-};
+    if("indexedDB" in window) {
+        idbSupported = true;
+    }
 
-open.onsuccess = function() {
-    // Start a new transaction
-    var db = open.result;
-    var tx = db.transaction("MyObjectStore", "readwrite");
-    var store = tx.objectStore("MyObjectStore");
-    var index = store.index("NameIndex");
+    if(idbSupported) {
+        var openRequest = indexedDB.open("appDB",1);
 
-    // Add some data
-    store.put({id: 12345, name: {first: "John", last: "Doe"}, age: 42});
-    store.put({id: 67890, name: {first: "Bob", last: "Smith"}, age: 35});
+        openRequest.onupgradeneeded = function(e) {
+            console.log("running onupgradeneeded");
+            var thisDB = e.target.result;
 
-    // Query the data
-    var getJohn = store.get(12345);
-    var getBob = index.get(["Smith", "Bob"]);
+            if(!thisDB.objectStoreNames.contains("user")) {
+                thisDB.createObjectStore("user", { autoIncrement: true });
+            }
 
-    getJohn.onsuccess = function() {
-        console.log(getJohn.result.name.first);  // => "John"
-    };
+        }
 
-    getBob.onsuccess = function() {
-        console.log(getBob.result.name.first);   // => "Bob"
-    };
+        openRequest.onsuccess = function(e) {
+            console.log("Success!");
+            db = e.target.result;
+            /*addUser();*/
+        }
 
-    // Close the db when the transaction is done
-    tx.oncomplete = function() {
-        db.close();
-    };
+        openRequest.onerror = function(e) {
+            console.log("Error");
+            console.dir(e);
+        }
+
+    }
+
+},false);
+
+function addUser(e) {
+    var transaction = db.transaction(["user"],"readwrite");
+    var store = transaction.objectStore("user");
+
+    //Define a person
+    var person = {
+        password:"test",
+        faceLink:"http://res.cloudinary.com/ext/image/upload/v1515669029/kekwzlbx6uqhtfpu2di6.jpg",
+        created:new Date()
+    }
+
+    var request = store.add(person, 1);
+
+    request.onsuccess = function (e) {
+        console.log("Done!")
+    }
+}
+
+function getImageUser() {
+    var transaction = db.transaction(["user"], "readonly");
+    var objectStore = transaction.objectStore("user");
+
+//x is some value
+    var ob = objectStore.get("0");
+
+    ob.onsuccess = function(e) {
+        return ob;
+    }
 }

@@ -25,6 +25,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </head>
 <body>
+<script src="js/appDB.js"></script>
 <script src="js/webcam.js"></script>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 
@@ -43,27 +44,6 @@
             <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
             <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
             <br>
-            <script type="text/javascript">
-
-                var enabled = false;
-
-                var WebCamera = require("webcamjs");
-
-                WebCamera.attach('#camdemo');
-                console.log("WebCam started");
-
-                /*document.getElementById("start").addEventListener('click',function(){
-                    if(!enabled){
-                        enabled = true;
-                        WebCamera.attach('#camdemo');
-                        console.log("The camera has been started");
-                    }else{
-                        enabled = false;
-                        WebCamera.reset();
-                        console.log("The camera has been disabled");
-                    }
-                },false);*/
-            </script>
             <hr style="width: 100px">
             <div style="width: 100%">
                 <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
@@ -72,37 +52,58 @@
             </div>
             <div style="text-align: center; margin-top: 10px;"><button type="button" class="btn btn-raised btn-success" id="buttonLogin">Login con FaceID</button></div>
             <!--<a href="javascript:void(take_snapshot())">Take Snapshot</a>-->
+            <script type="text/javascript">
+                var buttonLogin = document.getElementById("buttonLogin");
+                var enabled = false;
+
+                var WebCamera = require("webcamjs");
+
+                WebCamera.attach('#camdemo');
+                console.log("WebCam started");
+                webcamEnabled = true;
+
+                var cloudinary = require('cloudinary');
+                var urlImg1;
+                cloudinary.config({
+                    cloud_name: 'ext',
+                    api_key: '772469129542322',
+                    api_secret: 'R4YiTZdZAUmBU83tFibtJRFn9RI'
+                });
+
+                var buttonLogin = document.getElementById("buttonLogin");
+                jQuery("#inputPassword").keyup(function (e) {
+                    if(document.getElementById("inputPassword").value != ""){
+                        buttonLogin.textContent="Login con Password";
+                    } else {
+                        buttonLogin.textContent="Login con FaceID";
+                    }
+                });
+
+                buttonLogin.addEventListener("click", function (e) {
+                    if(buttonLogin.textContent == "Login con FaceID"){
+                        if(webcamEnabled){
+                            WebCamera.snap( function(data_uri) {
+                                //document.getElementById('buttonLogin').innerHTML = '<img src="'+data_uri+'"/>';
+                                cloudinary.uploader.upload(data_uri, function(result) {
+                                    urlImg1 = result.url;
+
+                                });
+
+                                var ob = getImageUser();
+                                console.log(ob)
+                            } );
+                        }
+                    }else{
+
+                    }
+                })
+            </script>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    var cloudinary = require('cloudinary');
 
-    cloudinary.config({
-        cloud_name: 'ext',
-        api_key: '772469129542322',
-        api_secret: 'R4YiTZdZAUmBU83tFibtJRFn9RI'
-    });
-
-    var buttonLogin = document.getElementById("buttonLogin");
-    jQuery("#inputPassword").keyup(function (e) {
-        if(document.getElementById("inputPassword").value != ""){
-            buttonLogin.textContent="Login con Password";
-        } else {
-            buttonLogin.textContent="Login con FaceID";
-        }
-    });
-
-    buttonLogin.addEventListener("click", function (e) {
-        if(buttonLogin.textContent == "Login con FaceID"){
-            cloudinary.uploader.upload("../img.jpg", function(result) {
-                console.log(result)
-            });
-        }else{
-
-        }
-    })
 
 </script>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
