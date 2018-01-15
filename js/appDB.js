@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function(){
         openRequest.onsuccess = function(e) {
             console.log("Success!");
             db = e.target.result;
-            /*addUser();*/
+            addUser();
         }
 
         openRequest.onerror = function(e) {
@@ -54,15 +54,52 @@ function addUser(e) {
 }
 
 function getImageUser(callback) {
-    var transaction = db.transaction(["user"], "readonly");
-    var objectStore = transaction.objectStore("user");
+    var openRequest = indexedDB.open("appDB",1);
+    
+    openRequest.onsuccess = function (e) {
+        console.log("db aperto da f");
+        db = e.target.result;
+        var transaction = db.transaction(["user"], "readonly");
+        var objectStore = transaction.objectStore("user");
 
-    //x is some value
-    var request = objectStore.get(1);
+        //x is some value
+        var request = objectStore.get(1);
 
-    request.onsuccess = function(e) {
-        callback(request.result.faceLink);
-    };
+        request.onsuccess = function(e) {
+            callback(request.result.faceLink);
+        };
+
+        request.onerror = function (e) {
+            alert("ok");
+        }
+    }
+}
+
+function check(callback) {
+    var openRequest = indexedDB.open("appDB",1);
+
+    openRequest.onsuccess = function (e) {
+        console.log("db aperto da f");
+        db = e.target.result;
+        var transaction = db.transaction(["user"], "readonly");
+        var objectStore = transaction.objectStore("user");
+
+        //x is some value
+        var request = objectStore.openCursor(1);
+
+        request.onsuccess = function(e) {
+            var cursor = e.target.target;
+            if (cursor) { // key already exist
+                callback (true);
+            } else { // key not exist
+                callback (false);
+            }
+        };
+
+        request.onerror = function (e) {
+            alert("ok");
+        }
+    }
 }
 
 function faceId(sourceImageUrl, callback) {
@@ -101,7 +138,7 @@ function faceId(sourceImageUrl, callback) {
             // Display error message.
             var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
             errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                    jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
             alert(errorString);
         });
 }

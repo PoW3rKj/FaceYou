@@ -23,12 +23,12 @@
     <!-- overImage -->
     <link rel="stylesheet" href="css/overImage.css">
     <link rel="stylesheet" href="css/success.css">
-
+    <script src="js/AppDB.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </head>
 <body>
-<script src="js/appDB.js"></script>
 <script src="js/webcam.js"></script>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="-webkit-app-region: drag">
 
     <a class="navbar-brand" href="#">FaceYou</a>
@@ -39,7 +39,7 @@
     </div>
 </nav>
 <div class="container">
-    <div id="card" class="card col-lg-5 col-md-7" style="margin-top: 70px; margin: auto; margin-top: 70px">
+    <div id="card" class="card col-lg-5 col-md-7" style="visibility: hidden; argin-top: 70px; margin: auto; margin-top: 70px">
         <div class="card-body">
             <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Login</p>
             <label for="exampleInputEmail1" class="bmd-label-floating">FaceID</label>
@@ -55,7 +55,7 @@
             <div style="text-align: center; margin-top: 10px;"><button type="button" class="btn btn-raised btn-success" id="buttonLogin">Login con FaceID</button></div>
         </div>
     </div>
-    <div id="divSpinner" class="modal-body" style="display: none; margin-bottom: 100px">
+    <div id="divSpinner" class="modal-body" style="position: absolute;top: 110px;left: 0;right: 0;margin-left: auto; margin-right: auto;">
         <div class="semipolar-spinner" :style="spinnerStyle" style="margin: auto">
             <div class="ring"></div>
             <div class="ring"></div>
@@ -64,11 +64,14 @@
             <div class="ring"></div>
         </div>
     </div>
-    <!--<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-        <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
-        <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 "/>
-    </svg>
-    <p class="success">Oh Yeah!</p>-->
+    <div id="success" style="text-align: center; margin-top: 100px; display: none;">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+            <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
+            <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 "/>
+        </svg>
+        <p class="success">Faccia comfermata!</p>
+    </div>
+
 
             <!--<a href="javascript:void(take_snapshot())">Take Snapshot</a>-->
             <script type="text/javascript">
@@ -76,14 +79,37 @@
                 var enabled = false;
 
                 var WebCamera = require("webcamjs");
+                var card = document.getElementById("card");
+                var spinner = document.getElementById("divSpinner");
 
                 WebCamera.attach('#camdemo');
+                WebCamera.set({
+                    width: 320,
+                    height: 240,
+                });
+
                 console.log("WebCam started");
                 webcamEnabled = true;
 
                 var cloudinary = require('cloudinary');
                 var urlImg1;
                 var urlImg2;
+
+                document.addEventListener("DOMContentLoaded", function (event) {
+                    check(function (result) {
+                        var firstTime = result;
+                        console.log(result)
+                        if(!firstTime){
+                            window.location.replace("registration.html");
+                        }else{
+                            card.style.visibility = "visible";
+                            spinner.style.display = "none";
+                        }
+                    });
+
+                });
+
+
 
                 cloudinary.config({
                     cloud_name: 'ext',
@@ -101,8 +127,8 @@
                 });
 
                 buttonLogin.addEventListener("click", function (e) {
-                    var card = document.getElementById("card");
-                    var spinner = document.getElementById("divSpinner");
+
+
                     $("#card").fadeOut(500);
                     $("#divSpinner").fadeIn(500);
                     //spinner.style.display = "block";
@@ -146,6 +172,17 @@
                                                     .done(function(data) {
                                                         /*$("#infos").append('<strong>Occhiali: </strong>'+ obj[0].faceAttributes.glasses);*/
                                                         console.log(JSON.stringify(data, null, 2));
+                                                        var obj = JSON.parse(JSON.stringify(data, null, 2));
+                                                        if(obj.isIdentical){
+                                                            $("#divSpinner").fadeOut(500);
+                                                            $("#success").style.display = "block";
+                                                            $("#success").fadeIn(500);
+                                                        } else {
+                                                            $("#divSpinner").fadeOut(500);
+                                                            $("#success").fadeOut(500);
+                                                            $("#card").fadeIn(500);
+                                                        }
+
                                                     })
                                                     .fail(function(jqXHR, textStatus, errorThrown) {
                                                         // Display error message.
@@ -166,16 +203,13 @@
                 })
             </script>
 </div>
-
 <script type="text/javascript">
-
 
 </script>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <!--<script src="node_modules/jquery/src/jquery.js"></script>-->
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
-<script src="js/success.js"/>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 </body>
 </html>
