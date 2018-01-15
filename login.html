@@ -14,6 +14,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="stylesheet" href="css/oneFace.css">
     <!-- Material Design for Bootstrap fonts and icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="css/oneFace.css">
@@ -21,6 +22,7 @@
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css" integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
     <!-- overImage -->
     <link rel="stylesheet" href="css/overImage.css">
+    <link rel="stylesheet" href="css/success.css">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </head>
@@ -37,7 +39,7 @@
     </div>
 </nav>
 <div class="container">
-    <div class="card col-lg-5 col-md-7 " style="margin-top: 70px; margin: auto; margin-top: 70px">
+    <div id="card" class="card col-lg-5 col-md-7" style="margin-top: 70px; margin: auto; margin-top: 70px">
         <div class="card-body">
             <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Login</p>
             <label for="exampleInputEmail1" class="bmd-label-floating">FaceID</label>
@@ -51,6 +53,23 @@
                 <span class="bmd-help">Non condividere la password (o la faccia) con nessuno.</span>
             </div>
             <div style="text-align: center; margin-top: 10px;"><button type="button" class="btn btn-raised btn-success" id="buttonLogin">Login con FaceID</button></div>
+        </div>
+    </div>
+    <div id="divSpinner" class="modal-body" style="display: none; margin-bottom: 100px">
+        <div class="semipolar-spinner" :style="spinnerStyle" style="margin: auto">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+        </div>
+    </div>
+    <!--<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+        <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
+        <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 "/>
+    </svg>
+    <p class="success">Oh Yeah!</p>-->
+
             <!--<a href="javascript:void(take_snapshot())">Take Snapshot</a>-->
             <script type="text/javascript">
                 var buttonLogin = document.getElementById("buttonLogin");
@@ -64,6 +83,8 @@
 
                 var cloudinary = require('cloudinary');
                 var urlImg1;
+                var urlImg2;
+
                 cloudinary.config({
                     cloud_name: 'ext',
                     api_key: '772469129542322',
@@ -80,17 +101,63 @@
                 });
 
                 buttonLogin.addEventListener("click", function (e) {
+                    var card = document.getElementById("card");
+                    var spinner = document.getElementById("divSpinner");
+                    $("#card").fadeOut(500);
+                    $("#divSpinner").fadeIn(500);
+                    //spinner.style.display = "block";
+
+
                     if(buttonLogin.textContent == "Login con FaceID"){
                         if(webcamEnabled){
                             WebCamera.snap( function(data_uri) {
                                 //document.getElementById('buttonLogin').innerHTML = '<img src="'+data_uri+'"/>';
-                                cloudinary.uploader.upload(data_uri, function(result) {
-                                    urlImg1 = result.url;
+                                cloudinary.uploader.upload(data_uri, function(result_cloudUrl) {
+                                    urlImg1 = result_cloudUrl.url;
+                                    getImageUser(function(result_camUrl) {
+                                        urlImg2 = result_camUrl;
 
+                                        /*var faceId1 = faceId(urlImg1);
+                                        var faceId2 = faceId(urlImg2);*/
+
+                                        faceId(urlImg1, function(result_camUrl1) {
+                                            faceId1 = result_camUrl1;
+                                            faceId(urlImg2, function(result_camUrl2)  {
+                                                faceId2 = result_camUrl2;
+
+                                                //subscription key
+                                                var subscriptionKey = "5dd2b7052f474b22b421bd9460d2eed3";
+                                                var uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/verify";
+                                                // Request parameters.
+                                                var params = {
+
+                                                };
+                                                    $.ajax({
+                                                        url: uriBase + "?" + $.param(params),
+                                                        // Request headers.
+                                                        beforeSend: function(xhrObj){
+                                                            xhrObj.setRequestHeader("Content-Type","application/json");
+                                                            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                                                        },
+                                                        type: "POST",
+                                                        // Request body.
+                                                        data: '{"faceId1":"' + faceId1 + '","faceId2":"' + faceId2 + '",}',
+                                                    })
+                                                    .done(function(data) {
+                                                        /*$("#infos").append('<strong>Occhiali: </strong>'+ obj[0].faceAttributes.glasses);*/
+                                                        console.log(JSON.stringify(data, null, 2));
+                                                    })
+                                                    .fail(function(jqXHR, textStatus, errorThrown) {
+                                                        // Display error message.
+                                                        var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                                                        errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                                                            jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                                                        alert(errorString);
+                                                    });
+                                            });
+                                        });
+                                    });
                                 });
-
-                                var ob = getImageUser();
-                                console.log(ob)
                             } );
                         }
                     }else{
@@ -98,8 +165,6 @@
                     }
                 })
             </script>
-        </div>
-    </div>
 </div>
 
 <script type="text/javascript">
@@ -110,6 +175,7 @@
 <!--<script src="node_modules/jquery/src/jquery.js"></script>-->
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
+<script src="js/success.js"/>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 </body>
 </html>
