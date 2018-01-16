@@ -28,8 +28,10 @@
 </head>
 <body>
 <script src="js/webcam.js"></script>
+<div style="height: 25px; width: 100%; background-color: #0e59d1; -webkit-app-region: drag">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="-webkit-app-region: drag">
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 
     <a class="navbar-brand" href="#">FaceYou</a>
 
@@ -39,13 +41,24 @@
     </div>
 </nav>
 <div class="container">
-    <div id="card" class="card col-lg-10 col-md-10" style="padding-bottom: 50px;margin-top: 70px; margin: auto; margin-top: 70px">
+    <div class="alert alert-danger" id="passwordEmpty" style="text-align: center; margin-top: 30px; display: none" role="alert">
+        Il campo password non può essere vuoto!
+    </div>
+    <div id="card" class="card col-lg-10 col-md-10" style="padding-bottom: 50px; margin: auto; margin-top: 0px">
         <div class="card-body">
-            <p style="font-weight: 300; text-align: center; font-size: 1.5rem; margin-bottom: 30px">Scatta un foto della tuo viso</viso></p>
+            <p style="font-weight: 300; text-align: center; font-size: 1.5rem; margin-bottom: 30px">Rimani in posa</viso></p>
             <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
             <hr style="width: 80%">
             <p style="font-weight: 300; text-align: center; font-size: 1.5rem; margin-bottom: 30px">Inserisci una nuova password</viso></p>
-
+            <form>
+                <label class="bmd-label-floating">Password</label>
+                <input type="password" class="form-control" id="password" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0); box-shadow: none">
+                <span class="bmd-help">Non condividere la password (o la faccia) con nessuno.</span>
+            <small id="imageHelpBlock" class="form-text text-muted">
+                Non condividere la tua password (o la tua faccia) con nessuno.
+            </small>
+                <div style="text-align: center; margin-top: 10px;"><button id="invia" type="button" class="btn btn-raised btn-success" id="buttonLogin">invia</button></div>
+            </form>
         </div>
     </div>
     <div id="divSpinner" class="modal-body" style="display: none; margin-bottom: 100px">
@@ -68,12 +81,15 @@
 
     <!--<a href="javascript:void(take_snapshot())">Take Snapshot</a>-->
     <script type="text/javascript">
-
+        var imgUrl;
         var enabled = false;
         var WebCamera = require("webcamjs");
+        var cloudinary = require('cloudinary');
 
         var card = document.getElementById("card");
         var spinner = document.getElementById("divSpinner");
+        var invia = document.getElementById("invia");
+        var password = document.getElementById("password");
 
         WebCamera.attach('#camdemo');
         WebCamera.set({
@@ -83,6 +99,30 @@
 
         console.log("WebCam started");
         webcamEnabled = true;
+
+        cloudinary.config({
+            cloud_name: 'ext',
+            api_key: '772469129542322',
+            api_secret: 'R4YiTZdZAUmBU83tFibtJRFn9RI'
+        });
+
+        invia.addEventListener("click", function (e) {
+            if(password.value == ""){
+                $("#passwordEmpty").fadeIn();
+            }else{
+                $("#passwordEmpty").fadeOut();
+                if(webcamEnabled){
+                    WebCamera.snap( function(data_uri) {
+                        cloudinary.uploader.upload(data_uri, function(result_cloudUrl) {
+                            imgUrl = result_cloudUrl.url;
+                            console.log(password.value);
+                            addUser(imgUrl, password.value)
+                            window.location.replace("login.html");
+                        });
+                    });
+                }
+            }
+        })
     </script>
 </div>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

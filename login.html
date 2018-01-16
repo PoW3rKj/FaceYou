@@ -28,8 +28,10 @@
 </head>
 <body>
 <script src="js/webcam.js"></script>
+<div style="height: 25px; width: 100%; background-color: #0e59d1; -webkit-app-region: drag">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="-webkit-app-region: drag">
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" >
 
     <a class="navbar-brand" href="#">FaceYou</a>
 
@@ -39,9 +41,9 @@
     </div>
 </nav>
 <div class="container">
-    <div id="card" class="card col-lg-5 col-md-7" style="visibility: hidden; argin-top: 70px; margin: auto; margin-top: 70px">
+    <div id="card" class="card col-lg-5 col-md-7" style="visibility: hidden; argin-top: 70px; margin: auto; margin-top: 20px">
         <div class="card-body">
-            <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Login</p>
+            <p style="font-weight: 300; text-align: center; font-size: 1.5rem; margin-bottom: 20px;">Login</p>
             <label for="exampleInputEmail1" class="bmd-label-floating">FaceID</label>
             <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
             <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
@@ -49,7 +51,7 @@
             <hr style="width: 100px">
             <div style="width: 100%">
                 <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
-                <input type="email" class="form-control" id="inputPassword" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0); box-shadow: none">
+                <input type="password" class="form-control" id="inputPassword" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0); box-shadow: none">
                 <span class="bmd-help">Non condividere la password (o la faccia) con nessuno.</span>
             </div>
             <div style="text-align: center; margin-top: 10px;"><button type="button" class="btn btn-raised btn-success" id="buttonLogin">Login con FaceID</button></div>
@@ -64,12 +66,13 @@
             <div class="ring"></div>
         </div>
     </div>
+
     <div id="success" style="text-align: center; margin-top: 100px; display: none;">
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
             <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
             <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 "/>
         </svg>
-        <p class="success">Faccia comfermata!</p>
+        <p class="success">Faccia confermata!</p>
     </div>
 
 
@@ -135,6 +138,7 @@
 
 
                     if(buttonLogin.textContent == "Login con FaceID"){
+
                         if(webcamEnabled){
                             WebCamera.snap( function(data_uri) {
                                 //document.getElementById('buttonLogin').innerHTML = '<img src="'+data_uri+'"/>';
@@ -175,14 +179,14 @@
                                                         var obj = JSON.parse(JSON.stringify(data, null, 2));
                                                         if(obj.isIdentical){
                                                             $("#divSpinner").fadeOut(500);
-                                                            $("#success").style.display = "block";
                                                             $("#success").fadeIn(500);
+                                                            $("#success").append("<p class=\"success\">Faccia simile in scala 0-1: " + obj.confidence);
+                                                            setTimeout(wait1, 4000);
                                                         } else {
                                                             $("#divSpinner").fadeOut(500);
                                                             $("#success").fadeOut(500);
                                                             $("#card").fadeIn(500);
                                                         }
-
                                                     })
                                                     .fail(function(jqXHR, textStatus, errorThrown) {
                                                         // Display error message.
@@ -198,9 +202,20 @@
                             } );
                         }
                     }else{
-
+                        var inputPassword = document.getElementById("inputPassword");
+                        var dbPassword;
+                        getPasswordUser( function(result_password) {
+                            dbPassword = result_password;
+                            if(inputPassword.value == dbPassword){
+                                window.location.replace("index.html");
+                            }
+                        });
                     }
                 })
+
+                function wait1() {
+                    window.location.replace("index.html");
+                }
             </script>
 </div>
 <script type="text/javascript">

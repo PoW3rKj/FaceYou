@@ -19,16 +19,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="css/oneFace.css">
     <!-- Material Design for Bootstrap CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css" integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css"
+          integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
     <!-- overImage -->
     <link rel="stylesheet" href="css/overImage.css">
-
+    <script src="js/AppDB.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </head>
 <body>
+<div style="height: 25px; width: 100%; background-color: #0e59d1; -webkit-app-region: drag">
+
+</div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">FaceYou</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -38,7 +44,10 @@
                 <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
             </li>
             <li>
-                <a id="logout" class="nav-link" href="#" style="">Esci <span class="sr-only"></span></a>
+                <a id="logout" class="nav-link" href="#" style="">LogOut <span class="sr-only"></span></a>
+            </li>
+            <li>
+                <a id="close-btn" class="nav-link" href="#" style="">Esci <span class="sr-only"></span></a>
             </li>
         </ul>
     </div>
@@ -47,18 +56,27 @@
 <div class="container">
     <div class="card" style="margin-top: 40px">
         <div class="card-body">
-            <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Inserisci il link diretto dell'immagine da analizzare</p>
+            <p style="font-weight: 300; text-align: center; font-size: 1.5rem;">Inserisci il link diretto dell'immagine
+                da analizzare</p>
 
             <label for="inputPassword5">Link</label>
-            <input type="link" id="inputImageLink" class="form-control" data-toggle="modal" data-target="#myModal" aria-describedby="imageHelpBlock" style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0); box-shadow: none">
+            <input type="link" id="inputImageLink" class="form-control" data-toggle="modal" data-target="#myModal"
+                   aria-describedby="imageHelpBlock"
+                   style="background-image: linear-gradient(0deg,#2196f3 2px,rgba(0,150,136,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0); box-shadow: none">
             <small id="imageHelpBlock" class="form-text text-muted">
-                Il testo inserito deve essere un link diretto all'immagine, quindi deve terminare con il formato dell'immagine (.JPG, PNG, .ICO ecc ecc), supporta la certificazione SSL.
+                Il testo inserito deve essere un link diretto all'immagine, quindi deve terminare con il formato
+                dell'immagine (.JPG, PNG, .ICO ecc ecc), supporta la certificazione SSL.
             </small>
 
-            <div style="text-align: center; margin-top: 20px;"><button disabled id="oneImageLink" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="color: #2196f3; box-shadow: none;">ANALIZZA</button></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button disabled id="oneImageLink" type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#exampleModal" style="color: #2196f3; box-shadow: none;">ANALIZZA
+                </button>
+            </div>
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
                 <div class="modal-dialog modal-lg" style="max-width: 90%;" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -78,17 +96,21 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-6">
-                                <img style="width: 90%; margin: 0 auto; display: block;" id="modalImage" usemap="#faces">
-                                <map name="faces" id="faces">
+                                <img style="width: 90%; margin: 0 auto; display: block;" id="modalImage"
+                                     usemap="#faces">
+                                <div class="form-group" style="margin-left: 30px; width: 470px;">
+                                    <label for="exampleSelect1" class="bmd-label-floating" style="color: #2196f3;">Example
+                                        select</label>
+                                    <select class="form-control" id="faceSelect" style="width: 100%">
 
-                                </map>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-lg-6" id="infos">
+                            <div class="col-lg-6" id="infos" style="margin-left: 30px;">
 
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" style="color: #46c705; box-shadow: none;" data-dismiss="modal">Aggiungi</button>
                             <button type="button" class="btn" data-dismiss="modal">Chiudi</button>
                         </div>
                     </div>
@@ -99,17 +121,20 @@
 </div>
 
 
-
-
-
-
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <!--<script src="node_modules/jquery/src/jquery.js"></script>-->
-<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
-<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js"
+        integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js"
+        integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe"
+        crossorigin="anonymous"></script>
+<script>$(document).ready(function () {
+    $('body').bootstrapMaterialDesign();
+});</script>
 <script type="text/javascript">
+
     var isUrl = false;
     var button = document.getElementById("oneImageLink");
     var textfieldImage = document.getElementById("inputImageLink");
@@ -117,37 +142,44 @@
     var modalImage = document.getElementById("modalImage");
     var spaces = false;
 
-    var link = getImageUser();
-    if(link == null){
-        console.log("ciao");
-    }
+    const remote = require('electron').remote;
+    document.getElementById("close-btn").addEventListener("click", function (e) {
+        var window = remote.getCurrentWindow();
+        window.close();
+    });
+    document.getElementById("logout").addEventListener("click", function (e) {
+        deleteDabase();
+        window.location.replace("registration.html");
+    });
+
 
     jQuery("#inputImageLink").keyup(function (e) {
-        if(textfieldImage.value.indexOf(' ') >= 0){
+        if (textfieldImage.value.indexOf(' ') >= 0) {
             spaces = true;
         } else {
             spaces = false;
         }
         console.log()
-        if(ValidURL(textfieldImage.value) && !spaces && (textfieldImage.value.includes(".png") || textfieldImage.value.includes(".jpg") || textfieldImage.value.includes(".bmp")) ){
+        if (ValidURL(textfieldImage.value) && !spaces && (textfieldImage.value.includes(".png") || textfieldImage.value.includes(".jpg") || textfieldImage.value.includes(".bmp"))) {
             isUrl = true;
         }
-        else{
+        else {
             isUrl = false;
         }
-        if(isUrl){
+        if (isUrl) {
             button.removeAttribute("disabled")
         } else {
             button.setAttribute("disabled", "")
         }
     })
 
-    document.getElementById("logout").addEventListener("click", function (e) {
-        window.sessionStorage.clear();
-        window.location.href = "login.html";
-    })
 
-    button.addEventListener("click",function(e){
+    button.addEventListener("click", function (e) {
+        var infos = document.getElementById('infos');
+        while (infos.firstChild) {
+            infos.removeChild(infos.firstChild);
+        }
+
         var sourceImageUrl = textfieldImage.value;
         divSpinner.style["display"] = "block";
         modalImage.style["display"] = "none";
@@ -168,8 +200,9 @@
             url: uriBase + "?" + $.param(params),
 
             // Request headers.
-            beforeSend: function(xhrObj){
-                xhrObj.setRequestHeader("Content-Type","application/json");
+            beforeSend: function (xhrObj) {
+
+                xhrObj.setRequestHeader("Content-Type", "application/json");
                 xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
             },
 
@@ -178,70 +211,311 @@
             // Request body.
             data: '{"url": ' + '"' + sourceImageUrl + '"}',
         })
-            .done(function(data) {
+            .done(function (data) {
+                var faceSelect = document.getElementById("faceSelect");
                 var infos = JSON.stringify(data, null, 2);
-                // Show formatted JSON on webpage.
-                var h = modalImage.height;
-                var nh;
-                var coeff;
-                var mat = [];
+                var infoBox = document.getElementById("infos");
+                var obj = JSON.parse(JSON.stringify(data, null, 2));
 
+                while (faceSelect.firstChild) {
+                    faceSelect.removeChild(faceSelect.firstChild);
+                }
+
+                for (var cont = 0; cont < Object.keys(obj).length; cont++) {
+                    var face = cont + 1;
+                    faceSelect.insertAdjacentHTML('beforeend', '<option value="' + face + '">' + face + '</option>');
+                }
+
+                $('#faceSelect').on('change', function (e) {
+                    while (infoBox.firstChild) {
+                        infoBox.removeChild(infoBox.firstChild);
+                    }
+
+                    index = faceSelect.value - 1;
+                    if (obj[index].faceAttributes.gender == "female") {
+                        var sex = "Femmina";
+                    } else {
+                        var sex = "Maschio";
+                    }
+                    var age = obj[index].faceAttributes.age;
+                    if (obj[index].faceAttributes.facialHair.moustache != 0) {
+                        var moustache = obj[index].faceAttributes.facialHair.moustache;
+                    } else {
+                        var moustache = "no";
+                    }
+                    if (obj[index].faceAttributes.facialHair.beard != 0) {
+                        var beard = obj[index].faceAttributes.facialHair.beard;
+                    } else {
+                        var beard = "no";
+                    }
+                    if (obj[index].faceAttributes.facialHair.sideburns != 0) {
+                        var sideburns = obj[index].faceAttributes.facialHair.sideburns;
+                    } else {
+                        var sideburns = "no";
+                    }
+                    if (obj[index].faceAttributes.glasses == "NoGlasses") {
+                        var glasses = "no";
+                    } else if (obj[index].faceAttributes.glasses == "ReadingGlasses") {
+                        var glasses = "Occhiali da lettura";
+                    } else if (obj[index].faceAttributes.glasses == "Sunglasses") {
+                        var glasses = "Occhiali da sole";
+                    } else {
+                        var glasses = "Occhiali da piscina";
+                    }
+
+                    var obj1 = {
+                        anger: obj[index].faceAttributes.emotion.anger,
+                        contempt: obj[index].faceAttributes.emotion.contempt,
+                        disgust: obj[index].faceAttributes.emotion.disgust,
+                        fear: obj[index].faceAttributes.emotion.fear,
+                        happiness: obj[index].faceAttributes.emotion.happiness,
+                        neutral: obj[index].faceAttributes.emotion.neutral,
+                        sadness: obj[index].faceAttributes.emotion.sadness,
+                        surprise: obj[index].faceAttributes.emotion.surprise,
+                    }
+
+                    var arr = [];
+
+                    for (var p in obj1) {
+                        arr.push(obj1[p]);
+                    }
+
+                    arr.sort(function (a, b) {
+                        return b - a
+                    });
+
+                    var top = arr[0];
+                    if (top == obj[index].faceAttributes.emotion.anger) {
+                        var emotion = "Arrabbiato";
+                    } else if (top == obj[index].faceAttributes.emotion.contempt) {
+                        var emotion = "Disprezza";
+                    }
+                    else if (top == obj[index].faceAttributes.emotion.disgust) {
+                        var emotion = "Disgusato";
+                    }
+                    else if (top == obj[index].faceAttributes.emotion.fear) {
+                        var emotion = "Impaurito";
+                    }
+                    else if (top == obj[index].faceAttributes.emotion.happiness) {
+                        var emotion = "Felice";
+                    }
+                    else if (top == obj[index].faceAttributes.emotion.neutral) {
+                        var emotion = "Neutrale";
+                    }
+                    else if (top == obj[index].faceAttributes.emotion.sadness) {
+                        var emotion = "Triste";
+                    }
+                    else if (top == obj[index].faceAttributes.emotion.surprise) {
+                        var emotion = "Sorpreso";
+                    }
+
+                    if (true == obj[index].faceAttributes.makeup.eyeMakeup) {
+                        var eyeMakeup = "si";
+                    }
+                    if (true == obj[index].faceAttributes.makeup.lipMakeup) {
+                        var lipMakeup = "si";
+                    }
+                    var som = 0;
+                    var col;
+                    var cont;
+                    console.log();
+                    for (cont = 0; cont < Object.keys(obj[index].faceAttributes.hair.hairColor).length; cont++) {
+                        if (obj[index].faceAttributes.hair.hairColor[cont].confidence > som) {
+                            som = obj[index].faceAttributes.hair.hairColor[cont].confidence;
+                            col = obj[index].faceAttributes.hair.hairColor[cont].color;
+                        }
+                    }
+
+
+                    switch (col) {
+                        case "brown" :
+                            col = "Castani";
+                            break;
+                        case "blond" :
+                            col = "Biondi";
+                            break;
+                        case "black" :
+                            col = "Neri";
+                            break;
+                        case "other" :
+                            col = "Altro";
+                            break;
+                        case "gray" :
+                            col = "Grigi";
+                            break;
+                        case "red" :
+                            col = "Rossi";
+                            break;
+                    }
+
+                    $("#infos").append(
+                        '<b>Sesso: </b>' + sex +
+                        '<br><b>Età: </b>' + age +
+                        '<br><b>Espressione facciale: </b>' + emotion +
+                        '<br><b>Colore capelli: </b>' + col +
+                        '<br><b>Pelato/a: </b>' + obj[0].faceAttributes.hair.bald +
+                        '<br><b>Baffi: </b>' + moustache +
+                        '<br><b>Barba: </b>' + beard +
+                        '<br><b>Basette: </b>' + sideburns +
+                        '<br><b>Trucco sugli occhi: </b>' + eyeMakeup +
+                        '<br><b>Rossetto: </b>' + lipMakeup
+                    );
+                });
                 var img = new Image();
-                img.addEventListener("load", function(){
+                img.addEventListener("load", function () {
                     nh = this.naturalHeight;
                 });
                 img.src = sourceImageUrl;
 
-                coeff = nh / h;
-                var obj = JSON.parse(JSON.stringify(data, null, 2));
-                for(var cont=0; cont<data.length; cont++){
-                    var face = {
-                        x: obj[cont].faceRectangle.left,
-                        i: cont,
-                    }
-                    mat.push(face);
-                    x1 = data[cont].faceRectangle.left;
-                    y1 = data[cont].faceRectangle.top;
-                    x2 = x1 + data[cont].faceRectangle.width;
-                    y2 = y1 + data[cont].faceRectangle.width;
-                    x1 = 10;
-                    x2 = 20;
-                    y1 = 20;
-                    y2 = 10;
-                    $("#faces").append('<area shape="rect" coords="'+ x1 +','+ y1 + ',' + x2 + ',' + y2 + '" alt="Face">');
-                }
-
-
-
-                for(var cont=0; cont<data.length; cont++){
-                    console.log("Added face in image");
-                    $("#faces").append('<area shape="rect" coords="230,316,160,246" alt="Face">');
-                }
                 /*$("#infos").append('<strong>Occhiali: </strong>'+ obj[0].faceAttributes.glasses);*/
-
                 console.log(JSON.stringify(data, null, 2));
                 console.log(data.length);
-
-                for(var cont=0; cont<data.length; cont++){
-                    console.log("Added face in image");
-                    $("#faces").append('<area shape="rect" coords="230,316,160,246" alt="Face">');
-                }
 
                 jQuery("#divSpinner").fadeOut(500);
                 divSpinner.style["display"] = "none";
                 document.getElementById("modalTitle").textContent = "Scansione riuscita";
                 modalImage.style["display"] = "block";
                 modalImage.setAttribute("src", sourceImageUrl);
+
+                if (obj[0].faceAttributes.gender == "female") {
+                    var sex = "Femmina";
+                } else {
+                    var sex = "Maschio";
+                }
+                var age = obj[0].faceAttributes.age;
+                if (obj[0].faceAttributes.facialHair.moustache != 0) {
+                    var moustache = obj[0].faceAttributes.facialHair.moustache;
+                } else {
+                    var moustache = "no";
+                }
+                if (obj[0].faceAttributes.facialHair.beard != 0) {
+                    var beard = obj[0].faceAttributes.facialHair.beard;
+                } else {
+                    var beard = "no";
+                }
+                if (obj[0].faceAttributes.facialHair.sideburns != 0) {
+                    var sideburns = obj[0].faceAttributes.facialHair.sideburns;
+                } else {
+                    var sideburns = "no";
+                }
+                if (obj[0].faceAttributes.glasses == "NoGlasses") {
+                    var glasses = "no";
+                } else if (obj[0].faceAttributes.glasses == "ReadingGlasses") {
+                    var glasses = "Occhiali da lettura";
+                } else if (obj[0].faceAttributes.glasses == "Sunglasses") {
+                    var glasses = "Occhiali da sole";
+                } else {
+                    var glasses = "Occhiali da piscina";
+                }
+
+                var obj1 = {
+                    anger: obj[0].faceAttributes.emotion.anger,
+                    contempt: obj[0].faceAttributes.emotion.contempt,
+                    disgust: obj[0].faceAttributes.emotion.disgust,
+                    fear: obj[0].faceAttributes.emotion.fear,
+                    happiness: obj[0].faceAttributes.emotion.happiness,
+                    neutral: obj[0].faceAttributes.emotion.neutral,
+                    sadness: obj[0].faceAttributes.emotion.sadness,
+                    surprise: obj[0].faceAttributes.emotion.surprise,
+                }
+
+                var arr = [];
+
+                for (var p in obj1) {
+                    arr.push(obj1[p]);
+                }
+
+                arr.sort(function (a, b) {
+                    return b - a
+                });
+
+                var top = arr[0];
+                if (top == obj[0].faceAttributes.emotion.anger) {
+                    var emotion = "Arrabbiato";
+                } else if (top == obj[0].faceAttributes.emotion.contempt) {
+                    var emotion = "Disprezza";
+                }
+                else if (top == obj[0].faceAttributes.emotion.disgust) {
+                    var emotion = "Disgusato";
+                }
+                else if (top == obj[0].faceAttributes.emotion.fear) {
+                    var emotion = "Impaurito";
+                }
+                else if (top == obj[0].faceAttributes.emotion.happiness) {
+                    var emotion = "Felice";
+                }
+                else if (top == obj[0].faceAttributes.emotion.neutral) {
+                    var emotion = "Neutrale";
+                }
+                else if (top == obj[0].faceAttributes.emotion.sadness) {
+                    var emotion = "Triste";
+                }
+                else if (top == obj[0].faceAttributes.emotion.surprise) {
+                    var emotion = "Sorpreso";
+                }
+
+                if (true == obj[0].faceAttributes.makeup.eyeMakeup) {
+                    var eyeMakeup = "si";
+                }
+                if (true == obj[0].faceAttributes.makeup.lipMakeup) {
+                    var lipMakeup = "si";
+                }
+                var som = 0;
+                var col;
+                var cont;
+                console.log();
+                for (cont = 0; cont < Object.keys(obj[0].faceAttributes.hair.hairColor).length; cont++) {
+                    if (obj[0].faceAttributes.hair.hairColor[cont].confidence > som) {
+                        som = obj[0].faceAttributes.hair.hairColor[cont].confidence;
+                        col = obj[0].faceAttributes.hair.hairColor[cont].color;
+                    }
+                }
+
+
+                switch (col) {
+                    case "brown" :
+                        col = "Castani";
+                        break;
+                    case "blond" :
+                        col = "Biondi";
+                        break;
+                    case "black" :
+                        col = "Neri";
+                        break;
+                    case "other" :
+                        col = "Altro";
+                        break;
+                    case "gray" :
+                        col = "Grigi";
+                        break;
+                    case "red" :
+                        col = "Rossi";
+                        break;
+                }
+
+                $("#infos").append(
+                    '<b>Sesso: </b>' + sex +
+                    '<br><b>Età: </b>' + age +
+                    '<br><b>Espressione facciale: </b>' + emotion +
+                    '<br><b>Colore capelli: </b>' + col +
+                    '<br><b>Pelato/a: </b>' + obj[0].faceAttributes.hair.bald +
+                    '<br><b>Baffi: </b>' + moustache +
+                    '<br><b>Barba: </b>' + beard +
+                    '<br><b>Basette: </b>' + sideburns +
+                    '<br><b>Trucco sugli occhi: </b>' + eyeMakeup +
+                    '<br><b>Rossetto: </b>' + lipMakeup
+                );
             })
-            .fail(function(jqXHR, textStatus, errorThrown) {
+            .fail(function (jqXHR, textStatus, errorThrown) {
                 // Display error message.
                 var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
                 errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                        jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                    jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
                 alert(errorString);
             });
 
-    },false);
+    }, false);
+
 
     function addChild(doc, parent, child, childText, attributes) {
         if (typeof child == "string") {
@@ -255,7 +529,7 @@
         }
         if (attributes) {
             for (var att in attributes) {
-                childNode.setAttribute(att,attributes[att]);
+                childNode.setAttribute(att, attributes[att]);
             }
         }
         parent.appendChild(childNode);
@@ -265,13 +539,14 @@
     function ValidURL(str) {
 
         var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
-        if(!regex .test(str)) {
+        if (!regex.test(str)) {
 
             return false;
         } else {
             return true;
         }
     }
+
 </script>
 </body>
 </html>

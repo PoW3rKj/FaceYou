@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function(){
         openRequest.onsuccess = function(e) {
             console.log("Success!");
             db = e.target.result;
-            addUser();
         }
 
         openRequest.onerror = function(e) {
@@ -35,21 +34,34 @@ document.addEventListener("DOMContentLoaded", function(){
 
 },false);
 
-function addUser(e) {
-    var transaction = db.transaction(["user"],"readwrite");
-    var store = transaction.objectStore("user");
+function addUser(url, password) {
+    var openRequest = indexedDB.open("appDB",1);
+    openRequest.onsuccess = function (e) {
+        var transaction = db.transaction(["user"],"readwrite");
+        var store = transaction.objectStore("user");
+        console.log(password + " " + url)
+        //Define a person
+        var person = {
+            password:password,
+            faceLink:url,
+        }
 
-    //Define a person
-    var person = {
-        password:"test",
-        faceLink:"http://res.cloudinary.com/ext/image/upload/v1515669029/kekwzlbx6uqhtfpu2di6.jpg",
-        created:new Date()
+        var request = store.add(person, 1);
+
+        request.onsuccess = function (e) {
+            console.log("Valori inseriti")
+        }
+        request.onerror = function (ev) {
+            alert("error")
+        }
     }
+}
 
-    var request = store.add(person, 1);
 
+function deleteDabase(){
+    var request = indexedDB.deleteDatabase("appDB");
     request.onsuccess = function (e) {
-        console.log("Done!")
+        alert("ok")
     }
 }
 
@@ -57,7 +69,6 @@ function getImageUser(callback) {
     var openRequest = indexedDB.open("appDB",1);
     
     openRequest.onsuccess = function (e) {
-        console.log("db aperto da f");
         db = e.target.result;
         var transaction = db.transaction(["user"], "readonly");
         var objectStore = transaction.objectStore("user");
@@ -75,29 +86,46 @@ function getImageUser(callback) {
     }
 }
 
-function check(callback) {
+function getPasswordUser(callback) {
     var openRequest = indexedDB.open("appDB",1);
 
     openRequest.onsuccess = function (e) {
-        console.log("db aperto da f");
         db = e.target.result;
         var transaction = db.transaction(["user"], "readonly");
         var objectStore = transaction.objectStore("user");
 
         //x is some value
-        var request = objectStore.openCursor(1);
+        var request = objectStore.get(1);
 
         request.onsuccess = function(e) {
-            var cursor = e.target.target;
-            if (cursor) { // key already exist
-                callback (true);
-            } else { // key not exist
-                callback (false);
-            }
+            callback(request.result.password);
         };
 
         request.onerror = function (e) {
             alert("ok");
+        }
+    }
+}
+
+function check(callback) {
+    var openRequest = indexedDB.open("appDB",1);
+
+    openRequest.onsuccess = function (e) {
+        db = e.target.result;
+        var transaction = db.transaction(["user"], "readonly");
+        var objectStore = transaction.objectStore("user");
+
+        var getPermanent = objectStore.get(1);
+        getPermanent.onsuccess = function() {
+            if (getPermanent.result === undefined) {
+                callback(false);
+            } else {
+                callback(true);
+            }
+        };
+
+        getPermanent.onerror = function (e) {
+            alert("error");
         }
     }
 }
