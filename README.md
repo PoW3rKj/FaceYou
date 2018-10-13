@@ -40,7 +40,7 @@ cloudinary.config({
 
 Usage👈
 ------
-Run this command in the root folder for install npm dependencies
+Run this command in the root folder to install npm dependencies
 
 ```
 npm install
