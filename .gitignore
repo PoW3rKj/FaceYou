@@ -1,5 +1,6 @@
 #directories
 bower_components
+/crypto-app/node_modules
 node_modules
 dist
 

@@ -100,10 +100,11 @@
         console.log("WebCam started");
         webcamEnabled = true;
 
+        //CLOUDINARY CONFIG
         cloudinary.config({
-            cloud_name: 'ext',
-            api_key: '772469129542322',
-            api_secret: 'R4YiTZdZAUmBU83tFibtJRFn9RI'
+            cloud_name: 'CLOUD_NAME',
+            api_key: 'API_KEY',
+            api_secret: 'API_SECRET'
         });
 
         invia.addEventListener("click", function (e) {

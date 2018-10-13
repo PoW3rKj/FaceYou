@@ -45,8 +45,8 @@
         <div class="card-body">
             <p style="font-weight: 300; text-align: center; font-size: 1.5rem; margin-bottom: 20px;">Login</p>
             <label for="exampleInputEmail1" class="bmd-label-floating">FaceID</label>
-            <!--You can change the dimensions of the camera with height and weight, (text align and margin is just for center the image)-->
-            <div id="camdemo" style="width: 320px; height: 240px; text-align: center; margin: 0 auto;"></div>
+            <!-- WEBCAM RESOLUTION -->
+            <div id="camdemo" style="width: 320px; height: 180px; text-align: center; margin: 0 auto;"></div>
             <br>
             <hr style="width: 100px">
             <div style="width: 100%">
@@ -75,154 +75,140 @@
         <p class="success">Faccia confermata!</p>
     </div>
 
+    <script type="text/javascript">
+        var buttonLogin = document.getElementById("buttonLogin");
+        var enabled = false;
 
-            <!--<a href="javascript:void(take_snapshot())">Take Snapshot</a>-->
-            <script type="text/javascript">
-                var buttonLogin = document.getElementById("buttonLogin");
-                var enabled = false;
+        var WebCamera = require("webcamjs");
+        var card = document.getElementById("card");
+        var spinner = document.getElementById("divSpinner");
 
-                var WebCamera = require("webcamjs");
-                var card = document.getElementById("card");
-                var spinner = document.getElementById("divSpinner");
+        WebCamera.attach('#camdemo');
+        WebCamera.set({
+            width: 320,
+            height: 240,
+        });
 
-                WebCamera.attach('#camdemo');
-                WebCamera.set({
-                    width: 320,
-                    height: 240,
-                });
+        console.log("WebCam started");
+        webcamEnabled = true;
 
-                console.log("WebCam started");
-                webcamEnabled = true;
+        var cloudinary = require('cloudinary');
+        var urlImg1;
+        var urlImg2;
 
-                var cloudinary = require('cloudinary');
-                var urlImg1;
-                var urlImg2;
+        document.addEventListener("DOMContentLoaded", function (event) {
+            check(function (result) {
+                var firstTime = result;
+                console.log(result)
+                if(!firstTime){
+                    window.location.replace("registration.html");
+                }else{
+                    card.style.visibility = "visible";
+                    spinner.style.display = "none";
+                }
+            });
 
-                document.addEventListener("DOMContentLoaded", function (event) {
-                    check(function (result) {
-                        var firstTime = result;
-                        console.log(result)
-                        if(!firstTime){
-                            window.location.replace("registration.html");
-                        }else{
-                            card.style.visibility = "visible";
-                            spinner.style.display = "none";
-                        }
-                    });
+        });
 
-                });
+        //CLOUDINARY CONFIG
+        cloudinary.config({
+            cloud_name: 'CLOUD_NAME',
+            api_key: 'API_KEY',
+            api_secret: 'API_SECRET'
+        });
 
+        var buttonLogin = document.getElementById("buttonLogin");
+        jQuery("#inputPassword").keyup(function (e) {
+            if(document.getElementById("inputPassword").value != ""){
+                buttonLogin.textContent="Login con Password";
+            } else {
+                buttonLogin.textContent="Login con FaceID";
+            }
+        });
 
+        buttonLogin.addEventListener("click", function (e) {
 
-                cloudinary.config({
-                    cloud_name: 'ext',
-                    api_key: '772469129542322',
-                    api_secret: 'R4YiTZdZAUmBU83tFibtJRFn9RI'
-                });
+            $("#card").fadeOut(500);
+            $("#divSpinner").fadeIn(500);
 
-                var buttonLogin = document.getElementById("buttonLogin");
-                jQuery("#inputPassword").keyup(function (e) {
-                    if(document.getElementById("inputPassword").value != ""){
-                        buttonLogin.textContent="Login con Password";
-                    } else {
-                        buttonLogin.textContent="Login con FaceID";
-                    }
-                });
+            if(buttonLogin.textContent == "Login con FaceID"){
+                if(webcamEnabled){
+                    WebCamera.snap( function(data_uri) {
+                        cloudinary.uploader.upload(data_uri, function(result_cloudUrl) {
+                            urlImg1 = result_cloudUrl.url;
+                            getImageUser(function(result_camUrl) {
+                                urlImg2 = result_camUrl;
 
-                buttonLogin.addEventListener("click", function (e) {
+                                faceId(urlImg1, function(result_camUrl1) {
+                                    faceId1 = result_camUrl1;
+                                    faceId(urlImg2, function(result_camUrl2)  {
+                                        faceId2 = result_camUrl2;
 
+                                        //AZURE FACE RECOGNITION KEY
+                                        var subscriptionKey = "SUBSCRIPTION_KEY";
+                                        //AZURE FACE RECOGNITION URL
+                                        var uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/verify";
+                    
+                                        var params = {
 
-                    $("#card").fadeOut(500);
-                    $("#divSpinner").fadeIn(500);
-                    //spinner.style.display = "block";
-
-
-                    if(buttonLogin.textContent == "Login con FaceID"){
-
-                        if(webcamEnabled){
-                            WebCamera.snap( function(data_uri) {
-                                //document.getElementById('buttonLogin').innerHTML = '<img src="'+data_uri+'"/>';
-                                cloudinary.uploader.upload(data_uri, function(result_cloudUrl) {
-                                    urlImg1 = result_cloudUrl.url;
-                                    getImageUser(function(result_camUrl) {
-                                        urlImg2 = result_camUrl;
-
-                                        /*var faceId1 = faceId(urlImg1);
-                                        var faceId2 = faceId(urlImg2);*/
-
-                                        faceId(urlImg1, function(result_camUrl1) {
-                                            faceId1 = result_camUrl1;
-                                            faceId(urlImg2, function(result_camUrl2)  {
-                                                faceId2 = result_camUrl2;
-
-                                                //subscription key
-                                                var subscriptionKey = "5dd2b7052f474b22b421bd9460d2eed3";
-                                                var uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/verify";
-                                                // Request parameters.
-                                                var params = {
-
-                                                };
-                                                    $.ajax({
-                                                        url: uriBase + "?" + $.param(params),
-                                                        // Request headers.
-                                                        beforeSend: function(xhrObj){
-                                                            xhrObj.setRequestHeader("Content-Type","application/json");
-                                                            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-                                                        },
-                                                        type: "POST",
-                                                        // Request body.
-                                                        data: '{"faceId1":"' + faceId1 + '","faceId2":"' + faceId2 + '",}',
-                                                    })
-                                                    .done(function(data) {
-                                                        /*$("#infos").append('<strong>Occhiali: </strong>'+ obj[0].faceAttributes.glasses);*/
-                                                        console.log(JSON.stringify(data, null, 2));
-                                                        var obj = JSON.parse(JSON.stringify(data, null, 2));
-                                                        if(obj.isIdentical){
-                                                            $("#divSpinner").fadeOut(500);
-                                                            $("#success").fadeIn(500);
-                                                            $("#success").append("<p class=\"success\">Faccia simile in scala 0-1: " + obj.confidence);
-                                                            setTimeout(wait1, 4000);
-                                                        } else {
-                                                            $("#divSpinner").fadeOut(500);
-                                                            $("#success").fadeOut(500);
-                                                            $("#card").fadeIn(500);
-                                                        }
-                                                    })
-                                                    .fail(function(jqXHR, textStatus, errorThrown) {
-                                                        // Display error message.
-                                                        var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-                                                        errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                                                            jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
-                                                        alert(errorString);
-                                                    });
+                                        };
+                                            $.ajax({
+                                                url: uriBase + "?" + $.param(params),
+                                                // Request headers.
+                                                beforeSend: function(xhrObj){
+                                                    xhrObj.setRequestHeader("Content-Type","application/json");
+                                                    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                                                },
+                                                type: "POST",
+                                                data: '{"faceId1":"' + faceId1 + '","faceId2":"' + faceId2 + '",}',
+                                            })
+                                            .done(function(data) {
+                                                console.log(JSON.stringify(data, null, 2));
+                                                var obj = JSON.parse(JSON.stringify(data, null, 2));
+                                                if(obj.isIdentical){
+                                                    $("#divSpinner").fadeOut(500);
+                                                    $("#success").fadeIn(500);
+                                                    $("#success").append("<p class=\"success\">Faccia simile in scala 0-1: " + obj.confidence);
+                                                    setTimeout(wait1, 4000);
+                                                } else {
+                                                    $("#divSpinner").fadeOut(500);
+                                                    $("#success").fadeOut(500);
+                                                    $("#card").fadeIn(500);
+                                                }
+                                            })
+                                            .fail(function(jqXHR, textStatus, errorThrown) {
+                                                // Display error message.
+                                                var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                                                errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                                                    jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                                                alert(errorString);
                                             });
-                                        });
                                     });
                                 });
-                            } );
-                        }
-                    }else{
-                        var inputPassword = document.getElementById("inputPassword");
-                        var dbPassword;
-                        getPasswordUser( function(result_password) {
-                            dbPassword = result_password;
-                            if(inputPassword.value == dbPassword){
-                                window.location.replace("index.html");
-                            }
+                            });
                         });
-                    }
-                })
-
-                function wait1() {
-                    window.location.replace("index.html");
+                    } );
                 }
-            </script>
+            }else{
+                var inputPassword = document.getElementById("inputPassword");
+                var dbPassword;
+                getPasswordUser( function(result_password) {
+                    dbPassword = result_password;
+                    if(inputPassword.value == dbPassword){
+                        window.location.replace("index.html");
+                    }
+                });
+            }
+        })
+
+        function wait1() {
+            window.location.replace("index.html");
+        }
+    </script>
 </div>
 <script type="text/javascript">
 
 </script>
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<!--<script src="node_modules/jquery/src/jquery.js"></script>-->
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
