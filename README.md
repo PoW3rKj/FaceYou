@@ -10,7 +10,7 @@
 🔥Introdution🔥
 ------
 
-An electron app for a school project build in 1 week, git commints and branches are not well organized and the code can contains italian words
+An electron app for a school project build in 1 week, git commints and branches are not well organized and the code may contain italian words
 
 How it works❓
 ------
