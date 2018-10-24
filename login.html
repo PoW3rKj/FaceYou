@@ -1,11 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: PoW3r
- * Date: 09/01/2018
- * Time: 22:35
- */
-?>
+<!--
+
+ Created by PhpStorm.
+ User: PoW3r
+ Date: 09/01/2018
+ Time: 22:35
+
+-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +41,7 @@
     </div>
 </nav>
 <div class="container">
-    <div id="card" class="card col-lg-5 col-md-7" style="visibility: hidden; argin-top: 70px; margin: auto; margin-top: 20px">
+    <div id="card" class="card col-lg-5 col-md-7" style="visibility: hidden; margin-top: 70px; margin: auto; margin-top: 20px">
         <div class="card-body">
             <p style="font-weight: 300; text-align: center; font-size: 1.5rem; margin-bottom: 20px;">Login</p>
             <label for="exampleInputEmail1" class="bmd-label-floating">FaceID</label>
@@ -76,12 +76,11 @@
     </div>
 
     <script type="text/javascript">
-        var buttonLogin = document.getElementById("buttonLogin");
-        var enabled = false;
+        let buttonLogin = document.getElementById("buttonLogin");
 
-        var WebCamera = require("webcamjs");
-        var card = document.getElementById("card");
-        var spinner = document.getElementById("divSpinner");
+        let WebCamera = require("webcamjs");
+        let card = document.getElementById("card");
+        let spinner = document.getElementById("divSpinner");
 
         WebCamera.attach('#camdemo');
         WebCamera.set({
@@ -89,17 +88,18 @@
             height: 240,
         });
 
-        console.log("WebCam started");
-        webcamEnabled = true;
+        let webcamEnabled = true;
 
-        var cloudinary = require('cloudinary');
-        var urlImg1;
-        var urlImg2;
+        let cloudinary = require('cloudinary');
+        let urlImg1;
+        let urlImg2;
 
-        document.addEventListener("DOMContentLoaded", function (event) {
-            check(function (result) {
-                var firstTime = result;
-                console.log(result)
+        document.addEventListener("DOMContentLoaded", (event) => {
+            check((result) => {
+                let firstTime = result;
+                
+                //If it is the first time at the login page, do an auto-redirect to registration page
+                //Else show the card and hide the spinner from the body
                 if(!firstTime){
                     window.location.replace("registration.html");
                 }else{
@@ -117,8 +117,12 @@
             api_secret: 'API_SECRET'
         });
 
-        var buttonLogin = document.getElementById("buttonLogin");
-        jQuery("#inputPassword").keyup(function (e) {
+        let buttonLogin = document.getElementById("buttonLogin");
+        
+        //On keyup on the input field, we check if the input field is empty
+        //If so, we change the buttonLogin's text to Login with password
+        //Else we change it with Login with FaceID
+        jQuery("#inputPassword").keyup((event) => {
             if(document.getElementById("inputPassword").value != ""){
                 buttonLogin.textContent="Login con Password";
             } else {
@@ -126,17 +130,25 @@
             }
         });
 
-        buttonLogin.addEventListener("click", function (e) {
+        //On click on login button
+        buttonLogin.addEventListener("click", (event) => {
 
+            //Hide the card and show a spinner
             $("#card").fadeOut(500);
             $("#divSpinner").fadeIn(500);
 
+            //If the user want to use the FaceID Login and if he has the webcam enabled
             if(buttonLogin.textContent == "Login con FaceID"){
                 if(webcamEnabled){
-                    WebCamera.snap( function(data_uri) {
-                        cloudinary.uploader.upload(data_uri, function(result_cloudUrl) {
+
+                //We take a photo and we run our algo
+                    WebCamera.snap( (data_uri) => {
+
+                        //We upload the photo to the cloudinary API
+                        cloudinary.uploader.upload(data_uri, (result_cloudUrl) => {
                             urlImg1 = result_cloudUrl.url;
-                            getImageUser(function(result_camUrl) {
+
+                            getImageUser((result_camUrl) => {
                                 urlImg2 = result_camUrl;
 
                                 faceId(urlImg1, function(result_camUrl1) {
